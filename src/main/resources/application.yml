@@ -5,9 +5,9 @@ spring:
   application:
     name: wfm-backend
   datasource:
-    url: jdbc:postgresql://localhost:5432/wfm_core_db
-    username: postgres
-    password: G7xP2mQ9Zb4N8vK3
+    url: dbc:postgresql://database-11.clu8e2m2s9ut.ap-south-1.rds.amazonaws.com:5432/myprojectdb
+    username: admin11
+    password: Workwise123456789
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
