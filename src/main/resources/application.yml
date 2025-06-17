@@ -1,0 +1,120 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: wfm-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/wfm_core_db
+    username: postgres
+    password: G7xP2mQ9Zb4N8vK3
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        multiTenancy: SCHEMA
+        tenant_identifier_resolver: com.wfm.experts.tenancy.TenantIdentifierResolver
+        multi_tenant_connection_provider: com.wfm.experts.tenancy.SchemaMultiTenantConnectionProvider
+        show_sql: true
+        format_sql: true
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+    default-schema: public
+    create-schemas: true
+    locations: classpath:db/migration/tenants
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: rohit.mishra@wfmexperts.com
+    password: wsxv kzoa hanf zcrw
+    protocol: smtp
+    properties:
+      mail.smtp.auth: "true"
+      mail.smtp.starttls.enable: "true"
+      # mail.debug: "true"
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    listener:
+      simple:
+        acknowledge-mode: auto
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          max-attempts: 3
+          multiplier: 2.0
+      direct:
+        acknowledge-mode: auto
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          max-attempts: 3
+          multiplier: 2.0
+
+# Custom RabbitMQ Topology and Routing Key Configuration
+rabbitmq: # Note: This is a custom key, not spring.rabbitmq
+  exchange:
+    notification: "notification.exchange.topic"
+    deadLetter: "deadletter.exchange.direct"
+  queue:
+    email: "email.notification.queue"
+    push: "push.notification.queue"
+    in_app: "in_app.notification.queue" # New IN_APP queue
+    dlq:
+      email: "email.notification.dlq"
+      push: "push.notification.dlq"
+      in_app: "in_app.notification.dlq" # New IN_APP DLQ
+  routingkey:
+    email_prefix: "notification.email"
+    push_prefix: "notification.push"
+    in_app_prefix: "notification.inapp" # New IN_APP prefix
+
+    email: "notification.email.#"
+    push: "notification.push.#"
+    in_app: "notification.inapp.#"      # New IN_APP binding key
+
+    dlq:
+      email: "dlq.email"
+      push: "dlq.push"
+      in_app: "dlq.inapp"             # New IN_APP DLQ routing key
+
+# Notification Engine Specific Configurations
+notification:
+  email:
+    default-language: "en-US"
+  push:
+    default-language: "en-US"
+  inapp: # Renamed from in_app to inapp for consistency, or keep as in_app if preferred
+    default-language: "en-US"
+  templating:
+    default-language: "en-US"
+
+logging:
+  level:
+    com.wfm.experts: DEBUG
+    com.wfm.experts.notificationengine: DEBUG
+    org.springframework.amqp: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.mail: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
