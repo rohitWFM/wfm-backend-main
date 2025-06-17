@@ -5,7 +5,7 @@ spring:
   application:
     name: wfm-backend
   datasource:
-    url: dbc:postgresql://database-11.clu8e2m2s9ut.ap-south-1.rds.amazonaws.com:5432/myprojectdb
+    url: jdbc:postgresql://database-11.clu8e2m2s9ut.ap-south-1.rds.amazonaws.com:5432/myprojectdb
     username: admin11
     password: Workwise123456789
     driver-class-name: org.postgresql.Driver
@@ -43,8 +43,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: admin
-    password: admin
+    username: guest
+    password: guest
     publisher-confirm-type: correlated
     publisher-returns: true
     listener:
