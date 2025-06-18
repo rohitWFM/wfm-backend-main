@@ -41,10 +41,10 @@ spring:
       # mail.debug: "true"
 
   rabbitmq:
-    host: host.docker.internal
+    host: 13.233.70.239
     port: 5672
-    username: guest
-    password: guest
+    username: wfmadmin
+    password: wfm@12345
     publisher-confirm-type: correlated
     publisher-returns: true
     listener:
