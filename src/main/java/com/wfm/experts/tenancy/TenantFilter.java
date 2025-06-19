@@ -41,6 +41,12 @@ public class TenantFilter extends OncePerRequestFilter {
         String requestUri = request.getRequestURI();
         LOGGER.info("Processing request URI: " + requestUri);
 
+        // ✅ Bypass health checks to avoid DB or tenant validation for ALB
+        if ("/actuator/health".equals(requestUri)) {
+            LOGGER.info("Health check bypass – skipping tenant validation.");
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (isLoginRequest(requestUri)) {
             handleLoginRequest(request, response, filterChain);
         } else if (isPublicRequest(requestUri)) {
