@@ -105,7 +105,8 @@ public class SecurityConfig {
                     "http://localhost:4200",
                     "http://192.168.29.187:4200", // ✅ Added IP-based frontend access
                     "http://192.168.29.164:4200",
-                    "https://d3hs9u8alp2av.cloudfront.net" // ✅ Add your CloudFront domain here
+                    "http://d3hs9u8alp2av.cloudfront.net", // ✅ Add your CloudFront domain here
+                    "http://wfm-backend-alb-60464600.ap-south-1.elb.amazonaws.com"
             ));
             config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
