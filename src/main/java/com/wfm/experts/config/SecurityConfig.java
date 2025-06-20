@@ -73,7 +73,8 @@ public class SecurityConfig {
                                 "/public/**",            // Publicly accessible job application endpoints
                                 "/ws/**",                // WebSocket handshake endpoint and its subpaths
                                 "/swagger-ui/**",        // Swagger UI (optional)
-                                "/v3/api-docs/**"      // OpenAPI docs (optional)
+                                "/v3/api-docs/**",     // OpenAPI docs (optional),
+                                "/actuator/health"
                         ).permitAll()
                         .anyRequest().authenticated() // All other requests require authentication
                 )

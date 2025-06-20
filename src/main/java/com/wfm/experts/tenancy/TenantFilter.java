@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -22,8 +21,6 @@ public class TenantFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = Logger.getLogger(TenantFilter.class.getName());
     private static final String PUBLIC_API_PREFIX = "/api/subscriptions";
     private static final String LOGIN_API_PREFIX = "/api/auth/login";
-    private static final String WEBSOCKET_PREFIX = "/ws"; // Add your actual WebSocket endpoint here
-
 
     private final SubscriptionRepository subscriptionRepository;
     private final JwtUtil jwtUtil;
@@ -41,8 +38,8 @@ public class TenantFilter extends OncePerRequestFilter {
         String requestUri = request.getRequestURI();
         LOGGER.info("Processing request URI: " + requestUri);
 
-        // ✅ Bypass health checks to avoid DB or tenant validation for ALB
-        if ("/actuator/health".equals(requestUri)) {
+        // ✅ Skip health checks (used by AWS ALB/ECS)
+        if (isHealthCheck(requestUri)) {
             LOGGER.info("Health check bypass – skipping tenant validation.");
             filterChain.doFilter(request, response);
             return;
@@ -121,6 +118,17 @@ public class TenantFilter extends OncePerRequestFilter {
 
     // 🔹 Helper methods
 
+    private boolean isHealthCheck(String uri) {
+        return "/actuator/health".equals(uri);
+    }
+
+    private boolean isLoginRequest(String uri) {
+        return uri.startsWith(LOGIN_API_PREFIX);
+    }
+
+    private boolean isPublicRequest(String uri) {
+        return uri.startsWith(PUBLIC_API_PREFIX);
+    }
     private String getJwtTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
@@ -150,17 +158,5 @@ public class TenantFilter extends OncePerRequestFilter {
         response.setStatus(statusCode);
         response.setContentType("application/json");
         response.getWriter().write(objectMapper.writeValueAsString(Map.of("error", message)));
-    }
-
-//    private boolean isPublicRequest(String requestUri) {
-//        return requestUri.startsWith(PUBLIC_API_PREFIX);
-//    }
-private boolean isPublicRequest(String uri) {
-    return uri.startsWith(PUBLIC_API_PREFIX);
-//            || uri.startsWith(WEBSOCKET_PREFIX);
-}
-
-    private boolean isLoginRequest(String requestUri) {
-        return requestUri.startsWith(LOGIN_API_PREFIX);
     }
 }

@@ -85,7 +85,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return requestUri.startsWith("/api/auth/login")
                 || requestUri.startsWith("/api/subscriptions")
                 || (requestUri.contains("/public/jobs/") && requestUri.endsWith("/apply"))
-                || requestUri.startsWith("/ws"); // ✅ WebSocket endpoint excluded
+                || requestUri.startsWith("/ws")
+                || requestUri.equals("/actuator/health"); // ✅ WebSocket endpoint excluded
 
     }
 
